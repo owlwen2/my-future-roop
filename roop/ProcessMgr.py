@@ -431,7 +431,7 @@ class ProcessMgr():
                     temp_frame = self.process_face(self.options.selected_index, face, temp_frame)
 
             elif self.options.swap_mode == "all_input" or self.options.swap_mode == "all_random":
-                for i,face in enumerate(faces):
+                for i, face in enumerate(faces):
                     num_faces_found += 1
                     if i < len(self.input_face_datas):
                         temp_frame = self.process_face(i, face, temp_frame)
@@ -441,7 +441,7 @@ class ProcessMgr():
             elif self.options.swap_mode == "selected":
                 num_targetfaces = len(self.target_face_datas) 
                 use_index = num_targetfaces == 1
-                for i,tf in enumerate(self.target_face_datas):
+                for i, tf in enumerate(self.target_face_datas):
                     for face in faces:
                         if compute_cosine_distance(tf.embedding, face.embedding) <= self.options.face_distance_threshold:
                             if i < len(self.input_face_datas):
@@ -458,26 +458,36 @@ class ProcessMgr():
                     if face.sex == gender:
                         num_faces_found += 1
                         temp_frame = self.process_face(self.options.selected_index, face, temp_frame)
-            
-            # might be slower but way more clean to release everything here
+
             for face in faces:
                 del face
             faces.clear()
 
-
-
         if roop.globals.vr_mode and num_faces_found % 2 > 0:
-            # stereo image, there has to be an even number of faces
             num_faces_found = 0
             return num_faces_found, frame
+
         if num_faces_found == 0:
             return num_faces_found, frame
 
-        #maskprocessor = next((x for x in self.processors if x.type == 'mask'), None)
+        # DEBUG
+        print("DEBUG imagemask type:", type(self.options.imagemask))
 
-        if self.options.imagemask is not None and self.options.imagemask.shape == frame.shape:
-            temp_frame = self.simple_blend_with_mask(temp_frame, frame, self.options.imagemask)
+        imagemask = self.options.imagemask
+        if isinstance(imagemask, dict) or imagemask is None:
+            imagemask = None
+        else:
+            try:
+                if imagemask.shape != frame.shape:
+                    imagemask = None
+            except AttributeError:
+                imagemask = None
+
+        if imagemask is not None:
+            temp_frame = self.simple_blend_with_mask(temp_frame, frame, imagemask)
+
         return num_faces_found, temp_frame
+
 
 
     def rotation_action(self, original_face:Face, frame:Frame):
