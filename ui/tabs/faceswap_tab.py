@@ -568,7 +568,7 @@ def on_preview_frame_changed(swap_model, frame_num, files, fake_preview, enhance
     mask_engine = map_mask_engine(selected_mask_engine, clip_text)
 
     roop.globals.execution_threads = roop.globals.CFG.max_threads
-    mask = layers[0] if layers is not None else None
+    mask = layers[0] if layers and len(layers) > 0 else None
     face_index = SELECTED_INPUT_FACE_INDEX
     if len(roop.globals.INPUT_FACESETS) <= face_index:
         face_index = 0
