@@ -133,7 +133,7 @@ def pre_check() -> bool:
         return False
     
     download_directory_path = util.resolve_relative_path('../models')
-    util.conditional_download(download_directory_path, ['https://huggingface.co/thebiglaskowski/inswapper_128.onnx/resolve/main/inswapper_128.onnx'])
+    util.conditional_download(download_directory_path, ['https://huggingface.co/countfloyd/deepfake/resolve/main/inswapper_128.onnx'])
     util.conditional_download(download_directory_path, ['https://huggingface.co/countfloyd/deepfake/resolve/main/reswapper_128.onnx'])
     util.conditional_download(download_directory_path, ['https://huggingface.co/countfloyd/deepfake/resolve/main/reswapper_256.onnx'])
     util.conditional_download(download_directory_path, ['https://huggingface.co/countfloyd/deepfake/resolve/main/GFPGANv1.4.onnx'])
@@ -229,7 +229,7 @@ def batch_process_regular(swap_model, output_method, files:list[ProcessEntry], m
     limit_resources()
     if process_mgr is None:
         process_mgr = ProcessMgr(progress)
-    mask = imagemask["layers"][0] if imagemask is not None else None
+    mask = imagemask["layers"][0] if imagemask is not None and "layers" in imagemask and len(imagemask["layers"]) > 0 else None
     if len(roop.globals.INPUT_FACESETS) <= selected_index:
         selected_index = 0
     options = ProcessOptions(swap_model, get_processing_plugins(masking_engine), roop.globals.distance_threshold, roop.globals.blend_ratio,
