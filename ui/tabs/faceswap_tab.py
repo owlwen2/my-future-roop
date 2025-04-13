@@ -833,3 +833,4 @@ def display_output(filename):
         else:
             current_frame = get_image_frame(filename)
         return gr.Image(visible=True, value=util.convert_to_gradio(current_frame)), gr.Video(visible=False)
+        
